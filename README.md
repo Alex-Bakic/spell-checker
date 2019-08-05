@@ -1,33 +1,26 @@
 # spell-checker
 
-FIXME: description
+A Clojure wrapper for the Words API
 
-## Installation
+# usage
 
-Download from http://example.com/FIXME.
+    ;; need to call the spell-checker.handler/set-api-key! function
+    ;; this is so you can make requests when you call the wrapper functions
+    ;; you can get a key by signing up for the free tier of Words API
+    
+    (require '[spell-checker.handler :refer :all])
+    
+    (set-api-key! "will-need-to-be-a-string")
+    
+    ;; now you can call any of the public fns
+    
+    (synonyms "monad") 
+    ;; => {:word "monad" :synonyms ["all" "the" "synonyms"]}
+    
+To get your free tier key, head to [rapid api](https://rapidapi.com/dpventures/api/wordsapi/) where you can make a few demo requests. Log in through github , google or facebook and you should be taken back to the menu, where you need to click on pricing. Then choose to subscribe for the free tier. 
 
-## Usage
-
-FIXME: explanation
-
-    $ java -jar spell-checker-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
+**Note** : Even subscribing to the free tier requires credit card information, in case you go over your alloted request amount, but for me personally I know I can't go over it, as this was just a hobbie program. The free tier allows you to do 2500 requests per day, which for me is plenty.
+  
 ## License
 
 Copyright © 2019 FIXME
