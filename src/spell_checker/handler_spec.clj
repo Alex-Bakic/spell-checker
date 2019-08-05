@@ -9,15 +9,7 @@
 ;;
 ;;
 
-;; SPECS FOR ALL THESE FUNCTIONS SO THEY ONLY RETURN WHAT WE WANT
-
-;; spec for checking the first key/value pair of the map, which is always the same
-;; regardless of which function is called, the other specs , excluding the ones
-;; that say ::check-"" , are speccing the second k/v pair.
-
-;; made slight change to word so we use the set itself instead
-;; if the word isn't in the dictionary, then we know it's pointless
-;; checking if it is a string and lower-case. 
+;; dictionary is a set of words, which will be what all the input is checked against.
 (s/def ::dictionary dictionary)
 (s/def ::word ::dictionary)
 
@@ -44,14 +36,15 @@
 (s/def ::count (s/and int? #(> % 0)))
 (s/def ::list (s/coll-of string? :kind vector?))
 
-(s/def ::definitions (s/coll-of ::each-definition))
+(s/def ::definition string?)
 
 (s/def ::each-definition
   (s/keys :req-un [::definition ::partOfSpeech]))
 
 
-(s/def ::definition string?)
+(s/def ::definitions (s/coll-of ::each-definition))
 
+;; using camelCasing as the api returns keys in this format...
 (s/def ::partOfSpeech
   #{"noun" "pronoun" "adjective" "adverb" "proverb" "verb"
     "preposition" "conjunction" "interjection" "exclamation"})
@@ -154,26 +147,41 @@
           :ret (param->spec param)
           :fn 'fn-check))
 
+(comment
+
+  (hs/param->fdef "synonyms")
+  spell-checker.core/synonyms
+  spell-checker.core> (s/exercise-fn `synonyms 4)
+  Execution error at spell-checker.core/eval17718 (form-init6650090911814085149.clj:143).
+  No :args spec found, can't generate
+  spell-checker.core> (doc synonyms)
+  -------------------------
+  spell-checker.handler/synonyms
+  ([word])
+  nil
+  spell-checker.core>
+
+  )
 
 (s/def ::parameter #{:synonyms :antonyms :definitions :syllables
                      :rhymes :frequency :examples :word})
-
-;; (s/def ::check-synonyms ...)
-;; (s/def ::check-antonyms ...)
-;; (s/def ::check-rhymes ...)
-;; (s/def ::check-definitions ...)
-;; (s/def ::check-syllables ...)
-;; (s/def ::check-word ...)
-;; (s/def ::check-frequency ...)
-;; (s/def ::check-examples ...)
 
 (defn dispatch-param
   [response]
   (->> response
        (second)
-
        (first)
        (s/conform ::parameter)))
+
+;; the way defmulti works is that it needs you to have a "universal key", a key that will appear
+;; in every map that the api could return. So for example let's say that key is :type. Now you need
+;; to be careful when choosing a namespaced key or not, in our case the api will just have :type
+
+;; the check that this universal key should have , it is just a check
+;; that is done like the other keys, the value itself is used as the differentiator for the methods.
+;; for example, if the map was {:type :synonyms :word "some-word" :synonyms ["some" "synonyms"]}
+;; then the method called would be the one that expects :
+
 
 (s/def ::type keyword?)
 
@@ -207,6 +215,8 @@
   [word]
   (every? #(Character/isLowerCase %) word))
 
-(s/def ::new-word (s/with-gen string? #(s/gen (gen/such-that (complement empty?) (s/and string? just-letters? lower-case?)))))
+(s/def ::new-word (s/with-gen string?
+                    #(s/gen (gen/such-that (complement empty?)
+                                           (s/and string? just-letters? lower-case?)))))
 
 

@@ -23,7 +23,7 @@
 
 ;; atom that stores the api key
 
-(def ^:dynamic *api-key* (atom nil))
+(def ^:dynamic ^:private *api-key* (atom nil))
 
 (defn set-api-key!
   [key]
@@ -35,7 +35,7 @@
     (read-str body)))
 
 ;; so let's try and make a get request
-(defn request
+(defn- request
   [[header-name header-value] param word]
   (let [url "https://wordsapiv1.p.rapidapi.com/words/"
         req (str url word "/" param)
@@ -43,7 +43,7 @@
                  :accept :json}]
       (client/get req options)))
 
-(defn wrap-request
+(defn- format-response
   [[header-name header-value] param word]
   (-> (request [header-name header-value] param word)
       (json->clj)
@@ -52,7 +52,7 @@
 ;; partially apply to avoid having to constantly recall defaults.
 (defn- defaults
   [param word]
-  (wrap-request ["X-RapidAPI-Key" @*api-key*] param word))
+  (partial format-response ["X-RapidAPI-Key" @*api-key*] param word))
 
 (defn word
   [word]
