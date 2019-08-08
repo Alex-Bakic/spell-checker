@@ -47,33 +47,3 @@
 (s/def ::check-addition (s/or :good ::good-addition? :bad ::bad-addition?))
 (s/def ::check-example (s/or :good ::good-example? :bad ::bad-example?))
 (s/def ::check-summary (s/or :good ::good-summary? :bad ::bad-summary?))
-
-
-(comment
-
-  "previous thoughts on solving this problem, might still use"
-
-   (ns hello-world.core
-      (:require [clojure.spec.alpha :as s]
-                [clojure.string :refer [ends-with? split]]))
-
-    ;; let's say we are checking a sentence for good connectives and openers.
-    ;; For example, when talking about the addition to an idea or concept we could use:
-   ;;    - furthermore, therefore, in addition, moreover
-
-    (defn good-addition? [sentence]
-       ;; the regex splits on the following criteria : either whitespace or comma.
-       (let [opening-word (first (split sentence #"\s|,"))
-             good-openers #{"Furthermore" "Therefore" "In addition" "Moreover"}
-             bad-openers #{"And" "The" "Because"}]
-         (and (good-openers opening-word) (nil? (bad-openers opening-word)))))
-
-    ;; Good words for signalling an example could be:
-    ;;   - to illustrate, for instance, just as significant , comparably, equivalently.
-    ;; (defn good-example? [s] ;; pretty much identical to fn above)
-
-    ;; For bringing your report to an end:
-    ;;   - in summary , in conclusion , clearly , lastly
-    ;; (defn good-summary? [s] ;; pretty much identical to fn above)
-
-)

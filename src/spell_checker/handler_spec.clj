@@ -147,32 +147,6 @@
           :ret (param->spec param)
           :fn 'fn-check))
 
-(comment
-
-  (hs/param->fdef "synonyms")
-  spell-checker.core/synonyms
-  spell-checker.core> (s/exercise-fn `synonyms 4)
-  Execution error at spell-checker.core/eval17718 (form-init6650090911814085149.clj:143).
-  No :args spec found, can't generate
-  spell-checker.core> (doc synonyms)
-  -------------------------
-  spell-checker.handler/synonyms
-  ([word])
-  nil
-  spell-checker.core>
-
-  )
-
-(s/def ::parameter #{:synonyms :antonyms :definitions :syllables
-                     :rhymes :frequency :examples :word})
-
-(defn dispatch-param
-  [response]
-  (->> response
-       (second)
-       (first)
-       (s/conform ::parameter)))
-
 ;; the way defmulti works is that it needs you to have a "universal key", a key that will appear
 ;; in every map that the api could return. So for example let's say that key is :type. Now you need
 ;; to be careful when choosing a namespaced key or not, in our case the api will just have :type
@@ -182,8 +156,6 @@
 ;; for example, if the map was {:type :synonyms :word "some-word" :synonyms ["some" "synonyms"]}
 ;; then the method called would be the one that expects :
 
-
-(s/def ::type keyword?)
 
 (defmulti spell-checker :type)
 
@@ -195,28 +167,7 @@
 (defmethod spell-checker :definitions [_] (s/keys :req-un [::type ::word ::definitions]))
 (defmethod spell-checker :word [_] (s/merge (s/keys :req-un [::type]) ::check-word))
 
+(s/def ::type keyword?)
 
-;; (s/def ::response (s/multi-spec spell-checker ::type))
 (s/def ::response (s/multi-spec spell-checker :type))
-
-;; since for now we don't actually know what the word actually is, we are just doing completely arbitrary,
-;; inaccurate generations, but when we design functions to do this properly, we will be making 2 API calls
-;; per word, which means , being on the free tier I can only do 1250 words per day.
-
-;; new dictionary snippet
-;; (gen/generate (s/gen (s/cat :word ::word :popularity ::perMillion :definition ::definitions)))
-
-;; use with-gen to show how we would try and brute-force almost, for more words in the dictionary
-(defn just-letters?
-  [word]
-  (every? #(Character/isLetter %) word))
-
-(defn lower-case?
-  [word]
-  (every? #(Character/isLowerCase %) word))
-
-(s/def ::new-word (s/with-gen string?
-                    #(s/gen (gen/such-that (complement empty?)
-                                           (s/and string? just-letters? lower-case?)))))
-
 

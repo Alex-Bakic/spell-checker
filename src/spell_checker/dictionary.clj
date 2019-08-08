@@ -24,7 +24,6 @@
   [word]
   (dictionary (if (all-lowercase? word) word (lower-case word))))
 
-;; specs for dictionary , with an entry assuming the form : ["*the-word*" popularity [definitions] trademark?]
 
 
 

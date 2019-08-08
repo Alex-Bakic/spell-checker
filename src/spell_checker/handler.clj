@@ -34,6 +34,11 @@
   (let [body (:body request)]
     (read-str body)))
 
+;; take the first key of the map and conj it to the :type key
+(defn- show-type
+  [m]
+  (assoc m :type (second (keys m))))
+
 ;; so let's try and make a get request
 (defn- request
   [[header-name header-value] param word]
@@ -47,57 +52,59 @@
   [[header-name header-value] param word]
   (-> (request [header-name header-value] param word)
       (json->clj)
-      (keywordize-keys)))
+      (keywordize-keys)
+      (show-type)))
  
 ;; partially apply to avoid having to constantly recall defaults.
 (defn- defaults
   [param word]
-  (partial format-response ["X-RapidAPI-Key" @*api-key*] param word))
+  (format-response ["X-RapidAPI-Key" @*api-key*] param word))
 
 (defn word
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-word %)]}
+   :post [(s/valid? ::hs/response %)]}
   (defaults nil word))
 
 (defn synonyms
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-synonyms %)]}
+   :post [(s/valid? ::hs/response %)]}
   (defaults "synonyms" word))
 
 (defn antonyms
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-antonyms %)]}
+   :post [(s/valid? ::hs/response %)]}
   (defaults "antonyms" word))
 
 (defn definitions
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-definitions %)]} 
+   :post [(s/valid? ::hs/response %)]} 
   (defaults "definitions" word))
 
 (defn examples
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-examples %)]}
+   :post [(s/valid? ::hs/response %)]}
   (defaults "examples" word))
 
 (defn rhymes
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-rhymes %)]} 
+   :post [(s/valid? ::hs/response %)]} 
   (defaults "rhymes" word))
 
 (defn syllables
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-syllables %)]} 
+   :post [(s/valid? ::hs/response %)]} 
   (defaults "syllables" word))
 
 (defn frequency
   [word]
   {:pre [(s/valid? ::hs/word word)]
-   :post [(s/valid? ::hs/check-frequency %)]}
+   :post [(s/valid? ::hs/response %)]}
   (defaults "frequency" word))
+
