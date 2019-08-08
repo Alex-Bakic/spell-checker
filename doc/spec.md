@@ -1270,7 +1270,11 @@ Before I head off, I do want to briefly speak of the changes that are coming to 
 Further Reading:
 
 [The spec guide](https://clojure.org/guides/spec)
+
 [Discussion on using fully-qualified namspaces for keys](http://insideclojure.org/2019/03/16/journal/)
+
 [s/select](http://insideclojure.org/2019/03/16/journal/)
+
 [where to put my specs?](https://stackoverflow.com/questions/37942495/where-to-put-specs-for-clojure-spec) 
+
 [Spec as a runtime transformation engine](https://www.metosin.fi/blog/clojure-spec-as-a-runtime-transformation-engine/)
