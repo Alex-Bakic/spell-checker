@@ -413,8 +413,6 @@ Now if we run this as it is with "monad" we get back an error. Let's take a look
 
 So we can see the issues are to do with the `::diversity` spec, the error is that while we accept any number including 0 or 1, 0 is not treated as float , which is fair enough. While it would be nice to keep the `float?` check, since we are doing the additional check of `#(<= 0 % 1)` we can get away with `number?`
 
-     ;; so what we are saying is, unless it is a zero or a one, check it is a float,
-     ;; within the range of zero to one inclusive, which allows the or check to pass too.
      (s/def ::diversity (s/and number? #(<= 0 % 1)))
      
 And with that it's time to take on the loch-nested monster. Bring on the `definitions` function. 
