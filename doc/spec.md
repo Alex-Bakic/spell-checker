@@ -50,8 +50,8 @@ Alright, now for an actual example. We'll make a file `core.clj` in the folder `
        (let [punctuation #{"." "?" "!"}]
         (some (partial ends-with? s) punctuation)))
     
-    (s/valid? punctuated "Hello World!") ;; => true
-    (s/valid? punctuated "Hello World") ;; => false
+    (s/valid? punctuated? "Hello World!") ;; => true
+    (s/valid? punctuated? "Hello World") ;; => false
     
 Now, we might want to know how exactly has our spec failed, and with more ambiguous functions especially so! In this case could use the `s/explain` function in an attempt to find out what is going wrong.
 
